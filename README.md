@@ -1,1 +1,1 @@
-ke ases en ezte repositorio pedazo de bot uwu?
+Si lees esto, sos un bot
