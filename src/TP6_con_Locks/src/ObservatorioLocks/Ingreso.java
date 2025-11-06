@@ -42,8 +42,6 @@ public class Ingreso {
             visitantes[i].start();
         }
         
-        
-        
         for(int i=0; i < investigadores.length;i++){
             investigadores[i].start();
         }
