@@ -27,7 +27,7 @@ public class Escuela extends Thread {
     public void run() {
         try {
             parque.pasaEscuela(num, capacidad, capacidadAReducir);
-            Thread.sleep(1500);
+            Thread.sleep(2500);
             parque.saleEscuela(num, capacidadAReducir);
         } catch (InterruptedException e) {
             System.out.println("Error en escuela run");

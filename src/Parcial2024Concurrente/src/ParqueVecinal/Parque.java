@@ -103,9 +103,9 @@ public class Parque {
         try {
             System.out.println("El visitante numero " + num + " se esta retirando del parque");
             capacidadActual--;
-            esperaEscuela.signalAll();
-            esperaResidente.signalAll();
+            esperaEscuela.signalAll();            
             esperaVisitante.signalAll();
+            esperaResidente.signalAll();
         } finally {
             lock.unlock();
         }
@@ -116,9 +116,9 @@ public class Parque {
         try{
             System.out.println("El residente numero "+num+" se esta retirando del parque");
             capacidadActual--;
-            esperaEscuela.signalAll();
-            esperaResidente.signalAll();
+            esperaEscuela.signalAll();       
             esperaVisitante.signalAll();
+            esperaResidente.signalAll();
         }finally{
             lock.unlock();
         }

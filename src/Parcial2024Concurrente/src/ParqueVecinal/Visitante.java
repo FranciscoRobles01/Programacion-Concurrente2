@@ -21,7 +21,7 @@ public class Visitante extends Thread {
     public void run(){
         try{
             parque.pasaVisitante(num);
-            Thread.sleep(1000);
+            Thread.sleep(2500);
             parque.saleVisitante(num);
         }catch(InterruptedException e){
             System.out.println("Error en run");

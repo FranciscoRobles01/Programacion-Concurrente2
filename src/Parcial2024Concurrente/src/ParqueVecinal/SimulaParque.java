@@ -15,7 +15,7 @@ public class SimulaParque {
      */
     public static void main(String[] args) {
         Parque parque = new Parque(6);
-        Visitante visitantes[] = new Visitante[10];
+        Visitante visitantes[] = new Visitante[15];
         Residente residentes[] = new Residente[10];
         Escuela escuelas[] = new Escuela[2];
         
