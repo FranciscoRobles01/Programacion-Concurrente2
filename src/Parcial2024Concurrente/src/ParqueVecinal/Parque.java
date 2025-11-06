@@ -34,21 +34,20 @@ public class Parque {
         esperaResidente = lock.newCondition();
         escuelaEsperando = 0;
         residenteEsperando = 0;
-        escuela = false;
     }
 
     public void pasaVisitante(int num) {
         lock.lock();
         try {
-            while (escuela || capacidadActual >= capacidadMax || residenteEsperando > 0) {
+            while (escuelaEsperando > 0 || capacidadActual >= capacidadMax || residenteEsperando > 0) {
                 esperaVisitante.await();
             }
             capacidadActual++;
             System.out.println("El visitante numero " + num + " se encuentra dentro del parque");
-            esperaEscuela.signalAll();
-            esperaResidente.signalAll();
-            esperaVisitante.signalAll();
 
+            esperaResidente.signalAll();
+            esperaEscuela.signalAll();
+            esperaVisitante.signalAll();
         } catch (InterruptedException e) {
             System.out.println("Error");
         } finally {
@@ -60,15 +59,16 @@ public class Parque {
         lock.lock();
         try {
             residenteEsperando++;
-            while (escuela || capacidadActual >= capacidadMax) {
+            while (escuelaEsperando > 0 || capacidadActual >= capacidadMax) {
                 esperaResidente.await();
             }
             residenteEsperando--;
             capacidadActual++;
 
             System.out.println("El residente numero" + num + " se encuentra dentro del parque");
-            esperaEscuela.signalAll();
+
             esperaResidente.signalAll();
+            esperaEscuela.signalAll();
             esperaVisitante.signalAll();
         } catch (InterruptedException e) {
             System.out.println("Error");
@@ -81,15 +81,17 @@ public class Parque {
         lock.lock();
         try {
             escuelaEsperando++;
-            while (escuela || cantChicos + capacidadActual >= capacidadMax) {
+            while (cantChicos + capacidadActual > capacidadMax || cantChicos+capacidadActual > capacidadAReducir) {
                 esperaEscuela.await();
             }
             escuelaEsperando--;
-            escuela = true;
-            capacidadMax = capacidadMax-capacidadAReducir;
+
+            capacidadMax = capacidadAReducir;
+            capacidadActual = capacidadActual + cantChicos;
             System.out.println("La escuela numero " + num + " con " + cantChicos + " estudiantes ha ingresado al parque.(El parque se ha reducido a " + capacidadAReducir + ")");
-            esperaEscuela.signalAll();
+
             esperaResidente.signalAll();
+            esperaEscuela.signalAll();
             esperaVisitante.signalAll();
         } catch (InterruptedException e) {
             System.out.println("Error en pasaEscuela");
@@ -103,39 +105,43 @@ public class Parque {
         try {
             System.out.println("El visitante numero " + num + " se esta retirando del parque");
             capacidadActual--;
-            esperaEscuela.signalAll();            
-            esperaVisitante.signalAll();
             esperaResidente.signalAll();
+            esperaEscuela.signalAll();
+            esperaVisitante.signalAll();
+
         } finally {
             lock.unlock();
         }
     }
-    
-    public void saleResidente(int num){
+
+    public void saleResidente(int num) {
         lock.lock();
-        try{
-            System.out.println("El residente numero "+num+" se esta retirando del parque");
+        try {
+            System.out.println("El residente numero " + num + " se esta retirando del parque" + capacidadMax);
             capacidadActual--;
-            esperaEscuela.signalAll();       
             esperaVisitante.signalAll();
             esperaResidente.signalAll();
-        }finally{
+            esperaEscuela.signalAll();
+
+        } finally {
             lock.unlock();
         }
     }
-    
-    public void saleEscuela(int num, int capacidadAReducir){
-    
+
+    public void saleEscuela(int num, int capacidadAReducir) {
+
         lock.lock();
-        try{
-            System.out.println("La escuela numero "+num+" se esta retirando del parque y la capacidad del parque vuelve a la normalidad");
-            escuela= false;
-            capacidadMax = capacidadMax+capacidadAReducir;
-            esperaEscuela.signalAll();
+        try {
+            capacidadMax = capacidadMax + (capacidadActual-capacidadAReducir);
+            capacidadActual = capacidadActual - capacidadAReducir;
+      
+            System.out.println("La escuela numero " + num + " se esta retirando del parque y la capacidad del parque vuelve a la normalidad " + capacidadMax);
+
             esperaResidente.signalAll();
             esperaVisitante.signalAll();
-        
-        }finally{
+            esperaEscuela.signalAll();
+
+        } finally {
             lock.unlock();
         }
     }

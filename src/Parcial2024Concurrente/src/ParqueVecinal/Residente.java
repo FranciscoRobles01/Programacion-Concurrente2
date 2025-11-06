@@ -21,7 +21,7 @@ public class Residente extends Thread{
     public void run(){
         try{
             parque.pasaResidente(num);
-            Thread.sleep(2500);
+            Thread.sleep(1500);
             parque.saleResidente(num);
         }catch(InterruptedException e){
             System.out.println("Error");
