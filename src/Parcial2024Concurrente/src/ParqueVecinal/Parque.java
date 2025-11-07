@@ -15,17 +15,18 @@ import java.util.concurrent.locks.Condition;
 public class Parque {
 
     private int capacidadMax;
+    private int capacidadMaxAux;
     private int capacidadActual;
     private Lock lock;
     private int escuelaEsperando;
     private int residenteEsperando;
-    private boolean escuela;
+    private int capacidadReducidaActual;
     private Condition esperaEscuela;
     private Condition esperaVisitante;
     private Condition esperaResidente;
 
     public Parque(int capacidad) {
-
+capacidadMaxAux= capacidad;
         capacidadMax = capacidad;
         capacidadActual = 0;
         lock = new ReentrantLock();
@@ -34,6 +35,7 @@ public class Parque {
         esperaResidente = lock.newCondition();
         escuelaEsperando = 0;
         residenteEsperando = 0;
+        capacidadReducidaActual=0;
     }
 
     public void pasaVisitante(int num) {
@@ -45,9 +47,6 @@ public class Parque {
             capacidadActual++;
             System.out.println("El visitante numero " + num + " se encuentra dentro del parque");
 
-            esperaResidente.signalAll();
-            esperaEscuela.signalAll();
-            esperaVisitante.signalAll();
         } catch (InterruptedException e) {
             System.out.println("Error");
         } finally {
@@ -65,11 +64,8 @@ public class Parque {
             residenteEsperando--;
             capacidadActual++;
 
-            System.out.println("El residente numero" + num + " se encuentra dentro del parque");
+            System.out.println("El residente numero " + num + " se encuentra dentro del parque");
 
-            esperaResidente.signalAll();
-            esperaEscuela.signalAll();
-            esperaVisitante.signalAll();
         } catch (InterruptedException e) {
             System.out.println("Error");
         } finally {
@@ -81,18 +77,16 @@ public class Parque {
         lock.lock();
         try {
             escuelaEsperando++;
-            while (cantChicos + capacidadActual > capacidadMax || cantChicos+capacidadActual > capacidadAReducir) {
+            while (cantChicos + capacidadActual > capacidadMax || capacidadReducidaActual > capacidadAReducir) {
                 esperaEscuela.await();
             }
             escuelaEsperando--;
-
+            capacidadReducidaActual=capacidadAReducir;
             capacidadMax = capacidadAReducir;
             capacidadActual = capacidadActual + cantChicos;
             System.out.println("La escuela numero " + num + " con " + cantChicos + " estudiantes ha ingresado al parque.(El parque se ha reducido a " + capacidadAReducir + ")");
 
-            esperaResidente.signalAll();
-            esperaEscuela.signalAll();
-            esperaVisitante.signalAll();
+            
         } catch (InterruptedException e) {
             System.out.println("Error en pasaEscuela");
         } finally {
@@ -128,17 +122,17 @@ public class Parque {
         }
     }
 
-    public void saleEscuela(int num, int capacidadAReducir) {
+    public void saleEscuela(int num, int chicos) {
 
         lock.lock();
         try {
-            capacidadMax = capacidadMax + (capacidadActual-capacidadAReducir);
-            capacidadActual = capacidadActual - capacidadAReducir;
-      
+            capacidadActual = capacidadActual - chicos;
+            capacidadMax = capacidadMaxAux;        
+            capacidadReducidaActual=0;
             System.out.println("La escuela numero " + num + " se esta retirando del parque y la capacidad del parque vuelve a la normalidad " + capacidadMax);
-
+esperaVisitante.signalAll();
             esperaResidente.signalAll();
-            esperaVisitante.signalAll();
+            
             esperaEscuela.signalAll();
 
         } finally {

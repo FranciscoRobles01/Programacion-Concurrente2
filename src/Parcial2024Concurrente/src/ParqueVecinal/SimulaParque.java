@@ -17,28 +17,27 @@ public class SimulaParque {
         Parque parque = new Parque(5);
         Visitante visitantes[] = new Visitante[15];
         Residente residentes[] = new Residente[10];
-        Escuela escuela1 = new Escuela(1,2,4,parque);
-        Escuela escuela2 = new Escuela(2,1,4,parque);
-        
-        for(int i =0; i < visitantes.length;i++){
-            visitantes[i]= new Visitante((i+1),parque);
+        Escuela escuela1 = new Escuela(1, 2, 4, parque);
+        Escuela escuela2 = new Escuela(2, 1, 5, parque);
+
+        for (int i = 0; i < visitantes.length; i++) {
+            visitantes[i] = new Visitante((i + 1), parque);
         }
-        
-        for(int i = 0; i < residentes.length;i++){
-            residentes[i]= new Residente((i+1),parque);
+
+        for (int i = 0; i < residentes.length; i++) {
+            residentes[i] = new Residente((i + 1), parque);
         }
-        
-        
-         for(int i =0; i < visitantes.length;i++){
+
+        for (int i = 0; i < visitantes.length; i++) {
             visitantes[i].start();
         }
-         
-         for(int i = 0; i < residentes.length;i++){
+
+        for (int i = 0; i < residentes.length; i++) {
             residentes[i].start();
         }
-         
-         escuela1.start();
-         escuela2.start();
+
+        escuela1.start();
+        escuela2.start();
     }
-    
+
 }
