@@ -26,7 +26,7 @@ public class Parque {
     private Condition esperaResidente;
 
     public Parque(int capacidad) {
-capacidadMaxAux= capacidad;
+        capacidadMaxAux = capacidad;
         capacidadMax = capacidad;
         capacidadActual = 0;
         lock = new ReentrantLock();
@@ -35,7 +35,7 @@ capacidadMaxAux= capacidad;
         esperaResidente = lock.newCondition();
         escuelaEsperando = 0;
         residenteEsperando = 0;
-        capacidadReducidaActual=0;
+        capacidadReducidaActual = 0;
     }
 
     public void pasaVisitante(int num) {
@@ -81,12 +81,11 @@ capacidadMaxAux= capacidad;
                 esperaEscuela.await();
             }
             escuelaEsperando--;
-            capacidadReducidaActual=capacidadAReducir;
+            capacidadReducidaActual = capacidadAReducir;
             capacidadMax = capacidadAReducir;
             capacidadActual = capacidadActual + cantChicos;
             System.out.println("La escuela numero " + num + " con " + cantChicos + " estudiantes ha ingresado al parque.(El parque se ha reducido a " + capacidadAReducir + ")");
 
-            
         } catch (InterruptedException e) {
             System.out.println("Error en pasaEscuela");
         } finally {
@@ -127,12 +126,12 @@ capacidadMaxAux= capacidad;
         lock.lock();
         try {
             capacidadActual = capacidadActual - chicos;
-            capacidadMax = capacidadMaxAux;        
-            capacidadReducidaActual=0;
+            capacidadMax = capacidadMaxAux;
+            capacidadReducidaActual = 0;
             System.out.println("La escuela numero " + num + " se esta retirando del parque y la capacidad del parque vuelve a la normalidad " + capacidadMax);
-esperaVisitante.signalAll();
+            esperaVisitante.signalAll();
             esperaResidente.signalAll();
-            
+
             esperaEscuela.signalAll();
 
         } finally {
